@@ -1917,7 +1917,6 @@ static int write_db_after_nodes(write_db_ctx_t *w, uint32_t nodes_root) {
     int node_count = w->node_count;
     CBMDumpEdge *edges = w->edges;
     int edge_count = w->edge_count;
-    const char *project = w->project;
 
     // Phase 1 (cont.): remaining data tables (edge + vector + token_vector records)
     CBM_PROF_START(t_data);
@@ -2021,7 +2020,7 @@ static int write_db_after_nodes(write_db_ctx_t *w, uint32_t nodes_root) {
         // 1 row: project name
         RecordBuilder r;
         rec_init(&r);
-        rec_add_text(&r, project);
+        rec_add_text(&r, w->project);
         rec_add_int(&r, FIRST_ROWID); /* rowid */
         int plen = 0;
         uint8_t *payload = rec_finalize(&r, &plen);
@@ -2205,10 +2204,9 @@ int cbm_writer_finalize(cbm_db_writer_t *w, const char *project, const char *roo
     w->wc.token_vec_count = token_vec_count;
 
     write_db_ctx_t wc = w->wc; /* value copy survives free(w) */
-    FILE *fp = w->wc.fp;
     free(w);
     if (err != 0) {
-        (void)fclose(fp);
+        (void)fclose(wc.fp); /* wc is a value copy, valid after free(w) */
         return err;
     }
     return write_db_after_nodes(&wc, nodes_root);
