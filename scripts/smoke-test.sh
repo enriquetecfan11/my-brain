@@ -209,7 +209,10 @@ echo "OK: query_graph count(DISTINCT f.label) returned 1 aggregate row"
 # 3d-funcs: scalar / introspection functions (full Cypher suite, Tier 1)
 cyp_first_cell() {
   # $1 = query; echoes rows[0][0] (or empty)
-  cli query_graph "{\"project\":\"$PROJECT\",\"query\":\"$1\"}" |
+  # Escape embedded double-quotes so string-literal args (e.g. replace(x,"a","A"))
+  # don't break the JSON we build by interpolation.
+  local q="${1//\"/\\\"}"
+  cli query_graph "{\"project\":\"$PROJECT\",\"query\":\"$q\"}" |
     python3 -c "import json,sys; d=json.loads(sys.stdin.read()); rows=d.get('rows',[]); print(rows[0][0] if rows and rows[0] else '')" 2>/dev/null || echo ""
 }
 
