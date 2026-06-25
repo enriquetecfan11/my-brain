@@ -1786,6 +1786,39 @@ TEST(cli_claude_subagent_hook) {
     PASS();
 }
 
+/* A user's own catch-all ("*") SubagentStart hook must survive CMM install and
+ * uninstall: ownership is keyed on the command, not just the "*" matcher. */
+TEST(cli_claude_subagent_hook_preserves_user_entry) {
+    char tmpdir[256];
+    snprintf(tmpdir, sizeof(tmpdir), "/tmp/cli-subuser-XXXXXX");
+    if (!cbm_mkdtemp(tmpdir))
+        FAIL("cbm_mkdtemp failed");
+
+    char cfg[512];
+    snprintf(cfg, sizeof(cfg), "%s/settings.json", tmpdir);
+    /* Pre-existing user SubagentStart hook, also matcher "*", different command. */
+    write_test_file(
+        cfg, "{\"hooks\":{\"SubagentStart\":[{\"matcher\":\"*\","
+             "\"hooks\":[{\"type\":\"command\",\"command\":\"echo user-subagent-hook\"}]}]}}");
+
+    /* Install CMM's hook: the user's "*" entry must remain, ours added alongside. */
+    ASSERT_EQ(cbm_upsert_claude_subagent_hooks(cfg), 0);
+    const char *d = read_test_file(cfg);
+    ASSERT_NOT_NULL(d);
+    ASSERT(strstr(d, "echo user-subagent-hook") != NULL); /* user's hook untouched */
+    ASSERT(strstr(d, "cbm-subagent-reminder") != NULL);   /* ours added */
+
+    /* Remove CMM's hook: the user's entry must still be intact, ours gone. */
+    ASSERT_EQ(cbm_remove_claude_subagent_hooks(cfg), 0);
+    d = read_test_file(cfg);
+    ASSERT_NOT_NULL(d);
+    ASSERT(strstr(d, "echo user-subagent-hook") != NULL); /* user's hook preserved */
+    ASSERT_NULL(strstr(d, "cbm-subagent-reminder"));      /* only ours removed */
+
+    test_rmdir_r(tmpdir);
+    PASS();
+}
+
 TEST(cli_detect_agents_finds_gemini) {
     char tmpdir[256];
     snprintf(tmpdir, sizeof(tmpdir), "/tmp/cli-detect-XXXXXX");
@@ -2868,6 +2901,7 @@ SUITE(cli) {
     RUN_TEST(cli_codex_session_hook_issue330);
     RUN_TEST(cli_gemini_session_hook_parity);
     RUN_TEST(cli_claude_subagent_hook);
+    RUN_TEST(cli_claude_subagent_hook_preserves_user_entry);
     RUN_TEST(cli_detect_agents_finds_gemini);
     RUN_TEST(cli_detect_agents_finds_zed);
     RUN_TEST(cli_detect_agents_finds_antigravity);

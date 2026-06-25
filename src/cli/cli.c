@@ -1795,9 +1795,15 @@ static const char *const cmm_gemini_old_matchers[] = {
     NULL,
 };
 
-/* Check if a hook array entry is ours (current matcher or a known old one). */
+/* Check if a hook array entry is ours (current matcher or a known old one).
+ * When require_command_substr is non-NULL, the matcher match is not sufficient:
+ * the entry must ALSO carry a hooks[].command containing that substring. This
+ * disambiguates our entry from a user's own hook that happens to share the same
+ * matcher (notably "*", which a user is likely to pick for a catch-all hook), so
+ * upsert/remove never clobber a foreign entry. NULL preserves matcher-only
+ * matching for callers whose matcher is already CMM-specific (e.g. "startup"). */
 static bool is_cmm_hook_entry(yyjson_mut_val *entry, const char *matcher_str,
-                              const char *const *old_matchers) {
+                              const char *const *old_matchers, const char *require_command_substr) {
     yyjson_mut_val *matcher = yyjson_mut_obj_get(entry, "matcher");
     if (!matcher || !yyjson_mut_is_str(matcher)) {
         return false;
@@ -1806,16 +1812,36 @@ static bool is_cmm_hook_entry(yyjson_mut_val *entry, const char *matcher_str,
     if (!val) {
         return false;
     }
-    if (strcmp(val, matcher_str) == 0) {
-        return true;
-    }
+    bool matcher_ok = strcmp(val, matcher_str) == 0;
     /* Also match old versions for backwards-compatible upgrade */
-    for (int i = 0; old_matchers && old_matchers[i]; i++) {
+    for (int i = 0; !matcher_ok && old_matchers && old_matchers[i]; i++) {
         if (strcmp(val, old_matchers[i]) == 0) {
-            return true;
+            matcher_ok = true;
         }
     }
-    return false;
+    if (!matcher_ok) {
+        return false;
+    }
+    if (require_command_substr) {
+        yyjson_mut_val *hooks = yyjson_mut_obj_get(entry, "hooks");
+        if (!hooks || !yyjson_mut_is_arr(hooks)) {
+            return false;
+        }
+        size_t idx;
+        size_t max;
+        yyjson_mut_val *h;
+        yyjson_mut_arr_foreach(hooks, idx, max, h) {
+            yyjson_mut_val *cmd = yyjson_mut_obj_get(h, "command");
+            if (cmd && yyjson_mut_is_str(cmd)) {
+                const char *cs = yyjson_mut_get_str(cmd);
+                if (cs && strstr(cs, require_command_substr)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    return true;
 }
 
 /* Generic hook upsert for both Claude Code and Gemini CLI */
@@ -1825,8 +1851,10 @@ typedef struct {
     const char *hook_event;
     const char *matcher_str;
     const char *command_str;
-    const char *const *old_matchers; /* NULL-terminated; may be NULL */
-    int timeout_sec;                 /* >0 adds "timeout" to the hook entry */
+    const char *const *old_matchers;  /* NULL-terminated; may be NULL */
+    int timeout_sec;                  /* >0 adds "timeout" to the hook entry */
+    const char *match_command_substr; /* non-NULL: also require this in the
+                                       * entry command to claim ownership */
 } hooks_upsert_args_t;
 static int upsert_hooks_json(hooks_upsert_args_t args) {
     const char *settings_path = args.settings_path;
@@ -1876,7 +1904,7 @@ static int upsert_hooks_json(hooks_upsert_args_t args) {
     size_t max;
     yyjson_mut_val *item;
     yyjson_mut_arr_foreach(event_arr, idx, max, item) {
-        if (is_cmm_hook_entry(item, matcher_str, old_matchers)) {
+        if (is_cmm_hook_entry(item, matcher_str, old_matchers, args.match_command_substr)) {
             yyjson_mut_arr_remove(event_arr, idx);
             break;
         }
@@ -1909,7 +1937,9 @@ typedef struct {
     const char *settings_path;
     const char *hook_event;
     const char *matcher_str;
-    const char *const *old_matchers; /* NULL-terminated; may be NULL */
+    const char *const *old_matchers;  /* NULL-terminated; may be NULL */
+    const char *match_command_substr; /* non-NULL: also require this in the
+                                       * entry command to claim ownership */
 } hooks_remove_args_t;
 static int remove_hooks_json(hooks_remove_args_t args) {
     const char *settings_path = args.settings_path;
@@ -1950,7 +1980,7 @@ static int remove_hooks_json(hooks_remove_args_t args) {
     size_t max;
     yyjson_mut_val *item;
     yyjson_mut_arr_foreach(event_arr, idx, max, item) {
-        if (is_cmm_hook_entry(item, matcher_str, old_matchers)) {
+        if (is_cmm_hook_entry(item, matcher_str, old_matchers, args.match_command_substr)) {
             yyjson_mut_arr_remove(event_arr, idx);
             break;
         }
@@ -2178,15 +2208,23 @@ static void cbm_install_subagent_reminder_script(const char *home) {
 int cbm_upsert_claude_subagent_hooks(const char *settings_path) {
     char command[CLI_BUF_1K];
     cbm_resolve_hook_command(CMM_SUBAGENT_REMINDER_SCRIPT, command, sizeof(command));
-    return upsert_hooks_json((hooks_upsert_args_t){.settings_path = settings_path,
-                                                   .hook_event = "SubagentStart",
-                                                   .matcher_str = "*",
-                                                   .command_str = command});
+    /* matcher "*" is the natural choice a user would also pick for their own
+     * catch-all SubagentStart hook, so claim ownership by command too — never
+     * clobber or remove a foreign "*" entry. */
+    return upsert_hooks_json(
+        (hooks_upsert_args_t){.settings_path = settings_path,
+                              .hook_event = "SubagentStart",
+                              .matcher_str = "*",
+                              .command_str = command,
+                              .match_command_substr = CMM_SUBAGENT_REMINDER_SCRIPT});
 }
 
 int cbm_remove_claude_subagent_hooks(const char *settings_path) {
-    return remove_hooks_json((hooks_remove_args_t){
-        .settings_path = settings_path, .hook_event = "SubagentStart", .matcher_str = "*"});
+    return remove_hooks_json(
+        (hooks_remove_args_t){.settings_path = settings_path,
+                              .hook_event = "SubagentStart",
+                              .matcher_str = "*",
+                              .match_command_substr = CMM_SUBAGENT_REMINDER_SCRIPT});
 }
 
 /* Matcher excludes read_file for consistency with the Claude fix: the hook
