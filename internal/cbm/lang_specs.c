@@ -886,7 +886,7 @@ static const char *svelte_branch_types[] = {"if_statement", "each_statement", "a
 // ==================== MESON ====================
 static const char *meson_func_types[] = {"function_expression", NULL};
 static const char *meson_module_types[] = {"source_file", NULL};
-static const char *meson_call_types[] = {"function_expression", "command", NULL};
+static const char *meson_call_types[] = {"normal_command", NULL};
 static const char *meson_branch_types[] = {"if_statement", "foreach_statement", NULL};
 static const char *meson_var_types[] = {"assignment_statement", NULL};
 
@@ -998,7 +998,7 @@ static const char *solidity_assign_types[] = {"assignment_expression",
                                               "augmented_assignment_expression", NULL};
 static const char *solidity_throw_types[] = {"revert_statement", "emit_statement", NULL};
 static const char *solidity_module_types[] = {"source_file", NULL};
-static const char *typst_func_types[] = {"lambda", NULL};
+static const char *typst_func_types[] = {"lambda", "let", NULL};
 static const char *typst_call_types[] = {"call", NULL};
 static const char *typst_import_types[] = {"import", "include", NULL};
 static const char *typst_branch_types[] = {"if", "for", "while", NULL};
@@ -1292,7 +1292,7 @@ static const char *wgsl_assign_types[] = {"assignment_statement", NULL};
 static const char *wgsl_module_types[] = {"translation_unit", NULL};
 static const char *kdl_module_types[] = {"document", NULL};
 static const char *json5_module_types[] = {"document", NULL};
-static const char *jsonnet_func_types[] = {"anonymous_function", NULL};
+static const char *jsonnet_func_types[] = {"anonymous_function", "bind", NULL};
 static const char *jsonnet_call_types[] = {"functioncall", NULL};
 static const char *jsonnet_import_types[] = {"import", "importstr", NULL};
 static const char *jsonnet_branch_types[] = {"conditional", NULL};

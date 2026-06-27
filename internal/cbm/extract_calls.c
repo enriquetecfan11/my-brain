@@ -698,9 +698,52 @@ static char *extract_elm_callee(CBMArena *a, TSNode node, const char *source, co
     return cbm_node_text(a, id, source);
 }
 
+// Jsonnet: a `functioncall` node's callee is its first `id` child (the called
+// binding name); the generic field path misses it (no `function`/`name` field).
+static char *extract_jsonnet_callee(CBMArena *a, TSNode node, const char *source, const char *nk) {
+    if (strcmp(nk, "functioncall") != 0) {
+        return NULL;
+    }
+    TSNode id = cbm_find_child_by_kind(node, "id");
+    return ts_node_is_null(id) ? NULL : cbm_node_text(a, id, source);
+}
+
+// Typst: a `call` node's callee is its `item` field (an ident), matching the
+// def-side resolution of `#let greet(name) = ...`.
+static char *extract_typst_callee(CBMArena *a, TSNode node, const char *source, const char *nk) {
+    if (strcmp(nk, "call") != 0) {
+        return NULL;
+    }
+    TSNode item = ts_node_child_by_field_name(node, TS_FIELD("item"));
+    return ts_node_is_null(item) ? NULL : cbm_node_text(a, item, source);
+}
+
+// Meson: a builtin invocation (`executable(...)`, `dependency(...)`) is a
+// `normal_command` whose `command` field is the called identifier.
+static char *extract_meson_callee(CBMArena *a, TSNode node, const char *source, const char *nk) {
+    if (strcmp(nk, "normal_command") != 0) {
+        return NULL;
+    }
+    TSNode cmd = ts_node_child_by_field_name(node, TS_FIELD("command"));
+    return ts_node_is_null(cmd) ? NULL : cbm_node_text(a, cmd, source);
+}
+
 static char *extract_callee_lang_specific(CBMArena *a, TSNode node, const char *source,
                                           CBMLanguage lang) {
     const char *nk = ts_node_type(node);
+
+    if (lang == CBM_LANG_JSONNET) {
+        char *c = extract_jsonnet_callee(a, node, source, nk);
+        return c ? c : extract_scripting_callee(a, node, source, lang, nk);
+    }
+    if (lang == CBM_LANG_TYPST) {
+        char *c = extract_typst_callee(a, node, source, nk);
+        return c ? c : extract_scripting_callee(a, node, source, lang, nk);
+    }
+    if (lang == CBM_LANG_MESON) {
+        char *c = extract_meson_callee(a, node, source, nk);
+        return c ? c : extract_scripting_callee(a, node, source, lang, nk);
+    }
 
     if (lang == CBM_LANG_SCSS) {
         char *c = extract_scss_callee(a, node, source, nk);

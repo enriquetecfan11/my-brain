@@ -849,6 +849,34 @@ TSNode cbm_resolve_func_name(TSNode node, CBMLanguage lang) {
             }
         }
 
+        /* Jsonnet: a function binding is a `bind` node carrying the name on the
+         * `function` field (an `id`), plus a `params` field. Plain value binds
+         * (`local x = 1`) have no `params` field -> resolve null -> skipped, so
+         * only function binds become Function defs. */
+        if (lang == CBM_LANG_JSONNET && strcmp(kind, "bind") == 0) {
+            TSNode params = ts_node_child_by_field_name(node, TS_FIELD("params"));
+            if (!ts_node_is_null(params)) {
+                TSNode nm = ts_node_child_by_field_name(node, TS_FIELD("function"));
+                if (!ts_node_is_null(nm)) {
+                    return nm;
+                }
+            }
+        }
+
+        /* Typst: `#let greet(name) = ...` parses to a `let` whose `pattern` field
+         * is a `call` node (the function signature); the name is that call's
+         * `item` field (an ident). A plain `#let x = 1` has a non-call pattern ->
+         * resolve null -> skipped, keeping value bindings out of func_types. */
+        if (lang == CBM_LANG_TYPST && strcmp(kind, "let") == 0) {
+            TSNode pat = ts_node_child_by_field_name(node, TS_FIELD("pattern"));
+            if (!ts_node_is_null(pat) && strcmp(ts_node_type(pat), "call") == 0) {
+                TSNode item = ts_node_child_by_field_name(pat, TS_FIELD("item"));
+                if (!ts_node_is_null(item)) {
+                    return item;
+                }
+            }
+        }
+
         /* SQL: create_function has no `name` field; the function name is nested as
          * object_reference > `name` field (an identifier). */
         if (lang == CBM_LANG_SQL && strcmp(kind, "create_function") == 0) {
