@@ -722,7 +722,11 @@ static const char *fsharp_branch_types[] = {"if_expression",    "for_expression"
 static const char *fsharp_var_types[] = {"value_declaration", NULL};
 
 // ==================== JULIA ====================
-static const char *julia_func_types[] = {"function_definition", "short_function_definition", NULL};
+/* `assignment` covers Julia short-form `f(x) = body` (the grammar parses it as an
+ * assignment with a call_expression LHS, not a short_function_definition). The
+ * resolver names it only when the LHS is a call, so plain `x = 5` is not a def. */
+static const char *julia_func_types[] = {"function_definition", "short_function_definition",
+                                         "assignment", NULL};
 static const char *julia_class_types[] = {"struct_definition", "abstract_definition",
                                           "primitive_definition", NULL};
 static const char *julia_module_types[] = {"source_file", NULL};
