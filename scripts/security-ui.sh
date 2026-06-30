@@ -4,7 +4,7 @@ set -euo pipefail
 # Layer 6: Graph UI security audit.
 #
 # Audits:
-#   A. Frontend asset scan (embedded JS/CSS/HTML or graph-ui/dist/)
+#   A. Frontend asset scan (embedded JS/CSS/HTML or cbm-dashboard/ui/dist/)
 #   B. HTTP server binding (must be 127.0.0.1 only)
 #   C. RPC proxy scope (no system()/popen() in HTTP handler path)
 #   D. CORS check (no wildcard Access-Control-Allow-Origin)
@@ -25,13 +25,13 @@ echo "=== Layer 6: Graph UI Security Audit ==="
 echo ""
 echo "--- A. Frontend asset scan ---"
 
-# Check both built dist and embedded asset source
+# Check both built dist and dashboard UI source
 UI_DIRS=()
-[[ -d "$ROOT/graph-ui/dist" ]] && UI_DIRS+=("$ROOT/graph-ui/dist")
-[[ -d "$ROOT/graph-ui/src" ]] && UI_DIRS+=("$ROOT/graph-ui/src")
+[[ -d "$ROOT/cbm-dashboard/ui/dist" ]] && UI_DIRS+=("$ROOT/cbm-dashboard/ui/dist")
+[[ -d "$ROOT/cbm-dashboard/ui/src" ]] && UI_DIRS+=("$ROOT/cbm-dashboard/ui/src")
 
 if [[ ${#UI_DIRS[@]} -eq 0 ]]; then
-    echo "SKIP: No graph-ui directory found."
+    echo "SKIP: No cbm-dashboard UI directory found."
 else
     for UI_DIR in "${UI_DIRS[@]}"; do
         echo "Scanning: $UI_DIR"

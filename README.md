@@ -7,7 +7,7 @@ This repository combines:
 | Component | What it does |
 |-----------|--------------|
 | **[codebase-memory-mcp](https://github.com/DeusData/codebase-memory-mcp)** | C engine that indexes 158 languages into a knowledge graph (functions, classes, calls, routes, imports…) and exposes **14 MCP tools** to your agent |
-| **`cbm-dashboard/`** | Standalone **React dashboard** (this fork) — REST API + 2D graph explorer, independent of the embedded 3D UI |
+| **`cbm-dashboard/`** | Standalone **React dashboard** (this fork) — REST API + 2D graph explorer, replaces the legacy embedded 3D UI |
 
 Everything runs **locally**. Your code never leaves your machine.
 

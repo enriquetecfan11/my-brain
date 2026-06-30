@@ -54,7 +54,6 @@
 # Extraction, language support, and graph UI.
 /internal/cbm/ @DeusData
 /tools/ @DeusData
-/graph-ui/ @DeusData
 /cbm-dashboard/ @DeusData
 
 # Test and reproduction infrastructure.

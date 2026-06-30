@@ -17,8 +17,9 @@ echo "=== Cleaning build artifacts ==="
 rm -rf "$ROOT/build/c"
 
 # Frontend build artifacts
-rm -rf "$ROOT/graph-ui/dist"
-rm -rf "$ROOT/graph-ui/node_modules"
+rm -rf "$ROOT/cbm-dashboard/ui/dist"
+rm -rf "$ROOT/cbm-dashboard/ui/node_modules"
+rm -rf "$ROOT/cbm-dashboard/api/node_modules"
 
 # Root-level node artifacts (if any)
 rm -rf "$ROOT/node_modules"

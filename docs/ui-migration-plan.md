@@ -1,6 +1,6 @@
 # UI Migration Plan — cbm-dashboard
 
-Plan to replace the embedded graph UI (`src/ui/`, `graph-ui/`) with a standalone
+Plan to replace the embedded graph UI (`src/ui/`) with a standalone
 **cbm-dashboard** service: Node/TypeScript backend + React SPA.
 
 ---
@@ -237,7 +237,7 @@ Local graph mode, zoom/pan, hover highlighting, and `GLOBAL_LIMIT` pagination ar
 ## What we do NOT use
 
 - `httpd.c`, `layout3d.c`, `GET /api/layout` from the C binary
-- Embedded `graph-ui/` Three.js build
+- Embedded `cbm-dashboard/ui` Vite build (replaces legacy `graph-ui/`)
 - `POST /rpc` for graph data (MCP proxy optional later)
 
 The SPA talks **only** to `/api/*` on the Node backend.

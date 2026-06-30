@@ -64,7 +64,7 @@ static char g_cors_json[512]; /* CORS + Content-Type: application/json */
 
 /* Inspect the Origin header and only reflect it if it's a localhost URL.
  * This prevents remote websites from making cross-origin requests to the
- * local graph-ui server (the key defense against CORS-based data exfil). */
+ * local dashboard UI dev server (the key defense against CORS-based data exfil). */
 static void update_cors(const cbm_http_req_t *req) {
     if (req->origin[0] != '\0' && (cbm_http_path_match(req->origin, "http://localhost:*") ||
                                    cbm_http_path_match(req->origin, "http://127.0.0.1:*"))) {
