@@ -33,6 +33,8 @@ flowchart LR
 2. **Query** — Your coding agent uses MCP tools (`search_graph`, `trace_path`, `get_architecture`, …).
 3. **Explore** — `cbm-dashboard` reads the same SQLite files and renders an Obsidian-style force-directed graph.
 
+For teams using several repos across several machines, see [docs/MULTI_USER_MULTI_PROJECT.md](docs/MULTI_USER_MULTI_PROJECT.md).
+
 ## License
 
 MIT — see [LICENSE](LICENSE).
