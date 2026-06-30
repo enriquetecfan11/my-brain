@@ -16,9 +16,10 @@ coverage.txt
 cbm_*/
 cli-*/
 
-# IDE
+# IDE / local tooling
 .idea/
 .vscode/
+.cursor/
 *.swp
 *.swo
 

@@ -18,6 +18,7 @@ rm -rf "$ROOT/build/c"
 
 # Frontend build artifacts
 rm -rf "$ROOT/cbm-dashboard/ui/dist"
+rm -rf "$ROOT/cbm-dashboard/ui/.vite"
 rm -rf "$ROOT/cbm-dashboard/ui/node_modules"
 rm -rf "$ROOT/cbm-dashboard/api/node_modules"
 
