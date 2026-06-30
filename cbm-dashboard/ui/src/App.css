@@ -1,0 +1,473 @@
+/* ── Global app shell ─────────────────────────────────────────── */
+
+.app {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 1.5rem;
+  border-bottom: 1px solid #334155;
+  background: #0f172a;
+  flex-shrink: 0;
+}
+
+.app-header__brand {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.app-header__project {
+  font-size: 0.8125rem;
+  color: #94a3b8;
+}
+
+.app-header__project--empty {
+  font-style: italic;
+}
+
+.app-tabs {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.app-tabs__btn {
+  padding: 0.4rem 0.9rem;
+  border: 1px solid #475569;
+  border-radius: 6px;
+  background: #1e293b;
+  color: #e2e8f0;
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+
+.app-tabs__btn--active {
+  background: #2563eb;
+  border-color: #2563eb;
+}
+
+/* app-main fills the remaining height without scrolling itself;
+   each panel manages its own scroll. */
+.app-main {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ProjectsPanel/SchemaPanel wrappers already use .panel which has height:100%;
+   GraphPanel renders graph-page which also fills 100%. Both work in this flex column. */
+
+/* ── Shared panel layout ──────────────────────────────────────── */
+
+.panel {
+  padding: 1.25rem 1.5rem;
+  height: 100%;
+  overflow: auto;
+  box-sizing: border-box;
+}
+
+.panel h2,
+.panel h3 {
+  margin: 0 0 1rem;
+}
+
+.panel__toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+/* ── Utility ──────────────────────────────────────────────────── */
+
+.status {
+  color: #94a3b8;
+  margin: 0.5rem 0;
+}
+
+.status--error {
+  color: #fca5a5;
+}
+
+.mono {
+  font-family: ui-monospace, monospace;
+  font-size: 0.8125rem;
+}
+
+/* ── Tables ───────────────────────────────────────────────────── */
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.data-table th,
+.data-table td {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid #334155;
+  text-align: left;
+}
+
+.data-table th {
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.data-table__row--selected {
+  background: #1e3a5f;
+}
+
+/* ── Schema panel ─────────────────────────────────────────────── */
+
+.schema-summary {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 1.25rem;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  background: #1e293b;
+  min-width: 140px;
+}
+
+.stat-card__label {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.stat-card__value {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.schema-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+/* ── Graph page layout ────────────────────────────────────────── */
+
+.graph-page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 0.75rem 1.25rem 0.75rem;
+  gap: 0.5rem;
+  overflow: hidden;
+}
+
+.graph-toolbar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.graph-toolbar__filters {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.graph-toolbar__filters label,
+.graph-toolbar__mode label.depth-label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  font-size: 0.8rem;
+  color: #94a3b8;
+}
+
+.graph-toolbar__filters input,
+.graph-toolbar__filters select,
+.graph-toolbar__mode select {
+  padding: 0.35rem 0.55rem;
+  border: 1px solid #475569;
+  border-radius: 4px;
+  background: #0f172a;
+  color: #e2e8f0;
+  font-size: 0.875rem;
+}
+
+.graph-toolbar__filters input {
+  min-width: 160px;
+}
+
+.graph-toolbar__mode {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.4rem;
+}
+
+.graph-notice {
+  flex-shrink: 0;
+  padding: 0.4rem 0.75rem;
+  background: #1c2a1a;
+  border: 1px solid #365314;
+  border-radius: 4px;
+  color: #a3e635;
+  font-size: 0.8rem;
+}
+
+.graph-notice--search {
+  background: #1a1f2e;
+  border-color: #334155;
+  color: #cbd5e1;
+}
+
+.graph-edge-filters {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+  padding: 0.35rem 0;
+}
+
+.graph-edge-filters__label {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  white-space: nowrap;
+}
+
+.graph-edge-filters__actions {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.graph-edge-filters__types {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.edge-type-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0.5rem;
+  border: 1px solid #334155;
+  border-radius: 999px;
+  background: #1e293b;
+  font-size: 0.75rem;
+  color: #cbd5e1;
+  cursor: pointer;
+  user-select: none;
+}
+
+.edge-type-chip input {
+  margin: 0;
+  accent-color: #2563eb;
+}
+
+.edge-type-chip:has(input:checked) {
+  border-color: #475569;
+  background: #0f172a;
+}
+
+.edge-type-chip:has(input:not(:checked)) {
+  opacity: 0.55;
+}
+
+
+/* The workspace fills the remaining height */
+.graph-workspace {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Canvas wrapper takes all horizontal space not used by NodeDetail */
+.graph-canvas-wrapper {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  position: relative;
+  background: #020617;
+}
+
+.graph-empty-msg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+/* ── Node detail panel ────────────────────────────────────────── */
+
+.node-detail {
+  width: 272px;
+  flex-shrink: 0;
+  border-left: 1px solid #334155;
+  background: #0f172a;
+  overflow-y: auto;
+  padding: 1rem;
+  font-size: 0.8125rem;
+}
+
+.node-detail__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.node-detail__title {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  min-width: 0;
+}
+
+.node-detail__badge {
+  display: inline-block;
+  font-size: 0.7rem;
+  padding: 0.1em 0.5em;
+  border-radius: 999px;
+  border: 1px solid;
+  width: fit-content;
+}
+
+.node-detail__name {
+  margin: 0;
+  font-size: 0.9375rem;
+  word-break: break-all;
+}
+
+.node-detail__close {
+  flex-shrink: 0;
+  padding: 0.25rem 0.45rem !important;
+  font-size: 0.75rem;
+}
+
+.node-detail__meta {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.3rem 0.75rem;
+  margin: 0 0 0.75rem;
+}
+
+.node-detail__meta dt {
+  color: #64748b;
+  white-space: nowrap;
+}
+
+.node-detail__meta dd {
+  margin: 0;
+  word-break: break-all;
+  color: #cbd5e1;
+}
+
+.node-detail__section {
+  margin-bottom: 1rem;
+}
+
+.node-detail__section h4 {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  margin: 0 0 0.4rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.node-detail__section ul {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.node-detail__section li {
+  padding: 0.25rem 0;
+  border-bottom: 1px solid #1e293b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Shared edge/label chips ──────────────────────────────────── */
+
+.edge-type {
+  font-size: 0.7rem;
+  padding: 0.05em 0.35em;
+  border-radius: 3px;
+  background: #1e293b;
+  color: #94a3b8;
+  border: 1px solid #334155;
+}
+
+/* ── Buttons ──────────────────────────────────────────────────── */
+
+button {
+  padding: 0.38rem 0.75rem;
+  border: 1px solid #475569;
+  border-radius: 4px;
+  background: #1e293b;
+  color: #e2e8f0;
+  cursor: pointer;
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+button:hover:not(:disabled) {
+  background: #334155;
+}
+
+.btn--active {
+  background: #2563eb !important;
+  border-color: #2563eb !important;
+}
+
+/* ── Responsive ───────────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+  .schema-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .app-header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0.75rem 1rem;
+  }
+
+  .node-detail {
+    width: 220px;
+  }
+}

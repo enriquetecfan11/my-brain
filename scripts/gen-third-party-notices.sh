@@ -24,7 +24,7 @@ mkdir -p "$(dirname "$OUT")"
     echo
     echo "---"
     echo
-    cat "$ROOT/THIRD_PARTY.md"
+    cat "$ROOT/docs/THIRD_PARTY.md"
     echo
     echo "---"
     echo

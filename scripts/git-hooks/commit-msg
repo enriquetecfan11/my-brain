@@ -14,5 +14,5 @@ echo "  Sign your commit:        git commit -s" >&2
 echo "  Fix the last commit:     git commit --amend -s" >&2
 echo "" >&2
 echo "The sign-off certifies you have the right to submit this code under the" >&2
-echo "project's MIT license — see the DCO file and CONTRIBUTING.md." >&2
+echo "project's MIT license — see the DCO file and docs/CONTRIBUTING.md." >&2
 exit 1

@@ -4,7 +4,7 @@
 # GitHub handles rather than organization teams.
 #
 # CODEOWNERS is the binding merge gate, not the reviewer directory.
-# Advisory area reviewers are recorded in MAINTAINERS.md. A handle appears in
+# Advisory area reviewers are recorded in docs/MAINTAINERS.md. A handle appears in
 # this file only when that person is authorized to satisfy binding code-owner
 # approval for the matching path.
 
@@ -15,13 +15,13 @@
 /.github/ @DeusData
 /scripts/ @DeusData
 /Makefile.cbm @DeusData
-/SECURITY.md @DeusData
+/docs/SECURITY.md @DeusData
 /docs/SECURITY-DISCLOSURE.md @DeusData
-/CONTRIBUTING.md @DeusData
-/CODE_OF_CONDUCT.md @DeusData
+/docs/CONTRIBUTING.md @DeusData
+/docs/CODE_OF_CONDUCT.md @DeusData
 /DCO @DeusData
 /LICENSE @DeusData
-/MAINTAINERS.md @DeusData
+/docs/MAINTAINERS.md @DeusData
 
 # Release and distribution surfaces.
 /pkg/ @DeusData
@@ -31,7 +31,7 @@
 /glama.json @DeusData
 /flake.nix @DeusData
 /flake.lock @DeusData
-/THIRD_PARTY.md @DeusData
+/docs/THIRD_PARTY.md @DeusData
 /vendored/ @DeusData
 /internal/cbm/vendored/ @DeusData
 
@@ -55,6 +55,7 @@
 /internal/cbm/ @DeusData
 /tools/ @DeusData
 /graph-ui/ @DeusData
+/cbm-dashboard/ @DeusData
 
 # Test and reproduction infrastructure.
 /tests/ @DeusData
