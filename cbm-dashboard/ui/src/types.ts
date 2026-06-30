@@ -65,9 +65,47 @@ export interface GraphPage {
   edges: Edge[];
 }
 
-export type AppTab = "projects" | "schema" | "graph";
+export type AppTab = "projects" | "schema" | "graph" | "chat";
 
 export interface GraphFilters {
   label?: string;
   filePathPrefix?: string;
+}
+
+/** POST /api/chat */
+export interface ChatMessage {
+  role: "user" | "assistant";
+  content: string;
+}
+
+export interface ChatConfig {
+  ollamaUrl: string;
+  model: string;
+  maxToolIterations: number;
+}
+
+export interface ChatRequest {
+  projectName: string;
+  messages: ChatMessage[];
+  config?: ChatConfig;
+}
+
+export interface ChatResponse {
+  message: { role: "assistant"; content: string };
+  toolCallsMade: number;
+}
+
+export interface ChatDefaults {
+  ollamaUrl: string;
+  model: string;
+  maxToolIterations: number;
+}
+
+export interface OllamaModelInfo {
+  name: string;
+  supportsTools: boolean;
+}
+
+export interface ChatModelsResponse {
+  models: OllamaModelInfo[];
 }

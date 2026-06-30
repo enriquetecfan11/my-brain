@@ -1,4 +1,5 @@
 import Fastify from "fastify";
+import { handleChat, listOllamaModels, type ChatRequest } from "./chat.js";
 import { loadConfig } from "./config.js";
 import {
   getGraph,
@@ -13,6 +14,44 @@ async function main(): Promise<void> {
   const app = Fastify({ logger: true });
 
   app.get("/health", async () => ({ status: "ok" }));
+
+  app.get("/api/chat/defaults", async () => ({
+    ollamaUrl: config.ollamaUrl,
+    model: config.ollamaModel,
+    maxToolIterations: 8,
+  }));
+
+  app.get<{ Querystring: { ollamaUrl?: string } }>(
+    "/api/chat/models",
+    async (req, reply) => {
+      try {
+        const ollamaUrl =
+          req.query.ollamaUrl?.trim() || config.ollamaUrl;
+        const models = await listOllamaModels(ollamaUrl);
+        return reply.send({ models });
+      } catch (err) {
+        app.log.error(err);
+        const message = err instanceof Error ? err.message : "internal error";
+        const status = message.startsWith("Ollama unreachable") ? 502 : 500;
+        return reply.status(status).send({ error: message });
+      }
+    },
+  );
+
+  app.post<{ Body: ChatRequest }>("/api/chat", async (req, reply) => {
+    try {
+      const result = await handleChat(config, req.body);
+      return reply.send(result);
+    } catch (err) {
+      if (err instanceof ProjectNotFoundError) {
+        return reply.status(404).send({ error: err.message });
+      }
+      app.log.error(err);
+      const message = err instanceof Error ? err.message : "internal error";
+      const status = message.startsWith("Ollama error") ? 502 : 400;
+      return reply.status(status).send({ error: message });
+    }
+  });
 
   app.get("/api/projects", async (_req, reply) => {
     try {

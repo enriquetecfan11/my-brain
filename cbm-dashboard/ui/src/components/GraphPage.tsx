@@ -81,9 +81,10 @@ function buildLocalSubgraph(
 
 interface GraphPageProps {
   projectName: string | null;
+  onAskInChat?: (message: string) => void;
 }
 
-export function GraphPage({ projectName }: GraphPageProps) {
+export function GraphPage({ projectName, onAskInChat }: GraphPageProps) {
   // Filter inputs (uncommitted — apply on button click or Enter)
   const [labelInput, setLabelInput] = useState("");
   const [pathInput, setPathInput] = useState("");
@@ -406,6 +407,7 @@ export function GraphPage({ projectName }: GraphPageProps) {
             node={selectedNode}
             allLinks={fgLinks}
             onClose={() => handleNodeSelect(null)}
+            onAskInChat={onAskInChat}
           />
         )}
       </div>

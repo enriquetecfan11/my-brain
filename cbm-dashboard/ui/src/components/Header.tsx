@@ -4,6 +4,7 @@ const TABS: { id: AppTab; label: string }[] = [
   { id: "projects", label: "Projects" },
   { id: "schema", label: "Schema" },
   { id: "graph", label: "Graph" },
+  { id: "chat", label: "Chat" },
 ];
 
 interface HeaderProps {

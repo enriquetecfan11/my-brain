@@ -6,9 +6,46 @@ interface NodeDetailProps {
   node: FGNode;
   allLinks: FGLink[];
   onClose: () => void;
+  onAskInChat?: (message: string) => void;
 }
 
-export function NodeDetail({ node, allLinks, onClose }: NodeDetailProps) {
+function buildNodeChatMessage(node: FGNode, inLinks: FGLink[], outLinks: FGLink[]): string {
+  const neighbors = {
+    incoming: inLinks.slice(0, 15).map((l) => {
+      const src = typeof l.source === "object" ? (l.source as FGNode) : null;
+      return {
+        type: l.type,
+        name: src?.name ?? `#${getLinkEndId(l.source)}`,
+        filePath: src?.filePath,
+      };
+    }),
+    outgoing: outLinks.slice(0, 15).map((l) => {
+      const tgt = typeof l.target === "object" ? (l.target as FGNode) : null;
+      return {
+        type: l.type,
+        name: tgt?.name ?? `#${getLinkEndId(l.target)}`,
+        filePath: tgt?.filePath,
+      };
+    }),
+  };
+
+  const context = {
+    label: node.label,
+    name: node.name,
+    qualifiedName: node.qualifiedName,
+    filePath: node.filePath,
+    startLine: node.startLine,
+    degree: node.__degree,
+    neighbors,
+  };
+
+  return (
+    "Explícame este nodo y sus relaciones en la arquitectura.\n\n" +
+    `Contexto del nodo:\n${JSON.stringify(context, null, 2)}`
+  );
+}
+
+export function NodeDetail({ node, allLinks, onClose, onAskInChat }: NodeDetailProps) {
   const { inLinks, outLinks } = useMemo(() => {
     const inLinks: FGLink[] = [];
     const outLinks: FGLink[] = [];
@@ -22,6 +59,10 @@ export function NodeDetail({ node, allLinks, onClose }: NodeDetailProps) {
   }, [node.id, allLinks]);
 
   const labelColor = colorForLabel(node.label);
+  const chatMessage = useMemo(
+    () => buildNodeChatMessage(node, inLinks, outLinks),
+    [node, inLinks, outLinks],
+  );
 
   return (
     <aside className="node-detail">
@@ -39,6 +80,16 @@ export function NodeDetail({ node, allLinks, onClose }: NodeDetailProps) {
           ✕
         </button>
       </div>
+
+      {onAskInChat && (
+        <button
+          type="button"
+          className="node-detail__ask-chat"
+          onClick={() => onAskInChat(chatMessage)}
+        >
+          Ask in Chat
+        </button>
+      )}
 
       <dl className="node-detail__meta">
         {node.filePath && (
