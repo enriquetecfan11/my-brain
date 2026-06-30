@@ -11,12 +11,6 @@ This repository combines:
 
 Everything runs **locally**. Your code never leaves your machine.
 
-<p align="center">
-  <img src="docs/graph-ui-screenshot.png" alt="Knowledge graph visualization" width="720">
-  <br>
-  <em>Graph exploration — embedded 3D UI (upstream) or the new 2D dashboard in <code>cbm-dashboard/</code></em>
-</p>
-
 ---
 
 ## How it fits together
