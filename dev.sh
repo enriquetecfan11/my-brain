@@ -15,6 +15,7 @@
 #   CBM_API_HOST          API bind address (default: 127.0.0.1)
 #   CBM_PROJECT           Default project name in the API
 #   CBM_OLLAMA_URL        Ollama base URL for chat (default: http://localhost:11434)
+#   CBM_BINARY            Path to codebase-memory-mcp CLI (default: on PATH)
 
 set -euo pipefail
 

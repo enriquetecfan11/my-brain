@@ -109,3 +109,50 @@ export interface OllamaModelInfo {
 export interface ChatModelsResponse {
   models: OllamaModelInfo[];
 }
+
+/** POST /api/index */
+export type IndexMode = "full" | "fast" | "moderate";
+
+export interface StartIndexRequest {
+  rootPath: string;
+  projectName?: string;
+  mode?: IndexMode;
+}
+
+export interface StartIndexResponse {
+  status: "indexing";
+  slot: number;
+  path: string;
+}
+
+export interface IndexJob {
+  slot: number;
+  status: "idle" | "running" | "done" | "error";
+  rootPath: string;
+  projectName: string;
+  mode: string;
+  error: string;
+  startedAt: string | null;
+  finishedAt: string | null;
+}
+
+export interface IndexStatusResponse {
+  jobs: IndexJob[];
+}
+
+export interface FsEntry {
+  name: string;
+  path: string;
+}
+
+export interface FsListResponse {
+  path: string;
+  parent: string | null;
+  entries: FsEntry[];
+}
+
+export interface PickFolderResponse {
+  path: string | null;
+  cancelled: boolean;
+  native: boolean;
+}

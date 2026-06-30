@@ -70,6 +70,7 @@ Environment variables (override defaults):
   CBM_API_PORT      API listen port         (default: 3000)
   CBM_API_HOST      API bind address        (default: 127.0.0.1)
   CBM_PROJECT       Default project name    (default: none)
+  CBM_BINARY        Path to MCP CLI         (default: codebase-memory-mcp)
 "
 }
 

@@ -9,6 +9,7 @@ export interface AppConfig {
   port: number;
   ollamaUrl: string;
   ollamaModel: string;
+  cbmBinary: string;
 }
 
 function defaultCacheDir(): string {
@@ -35,6 +36,7 @@ export function loadConfig(): AppConfig {
     port: parsePort(process.env.CBM_API_PORT, 3000),
     ollamaUrl: process.env.CBM_OLLAMA_URL?.trim() || "http://localhost:11434",
     ollamaModel: process.env.CBM_OLLAMA_MODEL?.trim() || "",
+    cbmBinary: process.env.CBM_BINARY?.trim() || "codebase-memory-mcp",
   };
 }
 

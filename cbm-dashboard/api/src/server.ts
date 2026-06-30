@@ -8,6 +8,8 @@ import {
   ProjectNotFoundError,
   type GetGraphOptions,
 } from "./db.js";
+import { listIndexJobs, startIndex, type StartIndexRequest } from "./index.js";
+import { getHomePath, listDirectory, pickFolder } from "./fs.js";
 
 async function main(): Promise<void> {
   const config = loadConfig();
@@ -63,6 +65,53 @@ async function main(): Promise<void> {
         error: err instanceof Error ? err.message : "internal error",
       });
     }
+  });
+
+  app.get("/api/index-status", async (_req, reply) => {
+    return reply.send({ jobs: listIndexJobs() });
+  });
+
+  app.post<{ Body: StartIndexRequest }>("/api/index", async (req, reply) => {
+    try {
+      const result = startIndex(config, req.body);
+      return reply.status(202).send(result);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "internal error";
+      const status =
+        message === "all index slots busy"
+          ? 429
+          : message === "directory not found" || message === "rootPath is required"
+            ? 400
+            : 500;
+      return reply.status(status).send({ error: message });
+    }
+  });
+
+  app.post("/api/pick-folder", async (_req, reply) => {
+    try {
+      const result = await pickFolder();
+      return reply.send(result);
+    } catch (err) {
+      app.log.error(err);
+      return reply.status(500).send({
+        error: err instanceof Error ? err.message : "internal error",
+      });
+    }
+  });
+
+  app.get<{ Querystring: { path?: string } }>("/api/fs/list", async (req, reply) => {
+    try {
+      const listing = listDirectory(req.query.path);
+      return reply.send(listing);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "internal error";
+      const status = message.includes("not allowed") || message.includes("not found") ? 400 : 500;
+      return reply.status(status).send({ error: message });
+    }
+  });
+
+  app.get("/api/fs/home", async (_req, reply) => {
+    return reply.send({ home: getHomePath() });
   });
 
   app.get<{ Params: { name: string } }>(
