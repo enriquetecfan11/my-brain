@@ -45,11 +45,11 @@ mkdir -p "$(dirname "$OUT")"
     # With-ui packaging path: node_modules exists (make frontend ran npm ci),
     # so append the license texts of the npm packages compiled into the UI
     # bundle. Standard binaries carry no bundle — the section is skipped.
-    if [ -d "$ROOT/cbm-dashboard/ui/node_modules" ]; then
+    if [ -d "$ROOT/../Dashboard/ui/node_modules" ]; then
         echo
         echo "---"
         echo
-        python3 "$ROOT/scripts/gen-ui-licenses.py" "$ROOT/cbm-dashboard/ui"
+        python3 "$ROOT/../Dashboard/scripts/gen-ui-licenses.py" "$ROOT/../Dashboard/ui"
     fi
 } > "$OUT"
 

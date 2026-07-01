@@ -108,16 +108,6 @@ scancode --license --quiet --processes 2 --json-pp "$STAGE/scan.json" "$STAGE/tr
 python3 scripts/license-gate-check.py "$STAGE/scan.json" scripts/license-policy.json
 
 echo "=== License gate 3/3: UI npm production tree ==="
-# The -ui binaries embed the compiled frontend bundle; its production
-# dependency tree must be allow-listed too. --ignore-scripts: no dependency
-# postinstall code runs inside the security job.
-if command -v npm &>/dev/null && [ -f cbm-dashboard/ui/package-lock.json ]; then
-    if [ ! -d cbm-dashboard/ui/node_modules ]; then
-        (cd cbm-dashboard/ui && npm ci --ignore-scripts --silent)
-    fi
-    python3 scripts/license-gate-check-npm.py cbm-dashboard/ui scripts/license-policy.json
-else
-    echo "SKIP: cbm-dashboard/ui package-lock.json unavailable — UI tree unchecked"
-fi
+bash "$ROOT/../Dashboard/scripts/license-gate-ui.sh"
 
 echo "=== License gate passed ==="

@@ -174,7 +174,7 @@ async function main(): Promise<void> {
   await app.listen({ host: config.host, port: config.port });
   app.log.info(
     { cacheDir: config.cacheDir, activeProject: config.activeProject },
-    "cbm-dashboard API listening",
+    "Dashboard API listening",
   );
 }
 

@@ -29,8 +29,8 @@ flowchart LR
 
   subgraph consume ["Consulta"]
     DB --> Agent[Agente IA vía MCP]
-    DB --> API[cbm-dashboard API :3000]
-    API --> UI[cbm-dashboard UI :5173]
+    DB --> API[Dashboard API :3000]
+    API --> UI[Dashboard UI :5173]
   end
 ```
 
@@ -55,7 +55,7 @@ flowchart TB
   end
 
   subgraph carol ["Carol (dashboard)"]
-    C1[cbm-dashboard :5173] --> C2[API :3000]
+    C1[Dashboard :5173] --> C2[API :3000]
     C2 --> C3["mismo ~/.cache/..."]
   end
 ```
@@ -120,7 +120,7 @@ Si el MCP arranca con el directorio de trabajo dentro de un repo, puede:
 
 Esto ayuda al uso diario, pero **no sustituye** a `list_projects` cuando hay muchos repos o el agente trabaja fuera del repo indexado.
 
-### Dashboard (`cbm-dashboard`)
+### Dashboard (`Dashboard/`)
 
 El API y la UI leen el **mismo directorio de caché** (`CBM_CACHE_DIR` o `~/.cache/codebase-memory-mcp`):
 
@@ -235,7 +235,7 @@ sequenceDiagram
 | **Indexado** | Cada uno indexa los repos que usa, con `name` acordado por el equipo |
 | **Pregunta de Ana** | «¿Quién llama a `createPayment`?» → `list_projects` → `backend-api` → `trace_path` |
 | **Pregunta de Bob** | «¿Cómo conecta el frontend con la API?» → indexar ambos → `cross-repo-intelligence` |
-| **Exploración** | Alguien levanta `cbm-dashboard` y navega el grafo del proyecto elegido |
+| **Exploración** | Alguien levanta `Dashboard` y navega el grafo del proyecto elegido |
 | **Onboarding** | Nuevo dev clona repos con `.codebase-memory/graph.db.zst` ya commiteado |
 
 ---

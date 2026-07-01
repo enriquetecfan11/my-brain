@@ -13,7 +13,7 @@ function formatHttpError(status: number, statusText: string, bodyError?: string)
   if (status === 502 || status === 503) {
     return (
       "API unreachable. Start the backend with: " +
-      "cd cbm-dashboard/api && npm run dev (or ./cbm-dashboard/dev.sh)"
+      "cd Dashboard/api && npm run dev (or ./Dashboard/dev.sh)"
     );
   }
   return statusText || `Request failed (${status})`;
@@ -31,7 +31,7 @@ async function parseErrorResponse(res: Response): Promise<string> {
 function wrapNetworkError(err: unknown): never {
   if (err instanceof ApiError) throw err;
   throw new ApiError(
-    "Cannot reach the API. Start the backend: cd cbm-dashboard/api && npm run dev",
+    "Cannot reach the API. Start the backend: cd Dashboard/api && npm run dev",
     0,
   );
 }

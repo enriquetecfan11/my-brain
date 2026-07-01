@@ -65,7 +65,7 @@ src/
   ui/               Graph visualization HTTP server (first-party httpd)
 internal/cbm/       Tree-sitter AST extraction (64 languages, vendored C grammars)
 vendored/           sqlite3, yyjson, mimalloc, xxhash, tre, nomic
-cbm-dashboard/    Standalone React dashboard (graph explorer + chat)
+Dashboard/        Standalone React dashboard (../Dashboard/ in my-brain monorepo)
 scripts/            Build, test, lint, security audit scripts
 tests/              All C test files
 ```

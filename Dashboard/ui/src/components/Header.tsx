@@ -17,7 +17,7 @@ export function Header({ activeTab, selectedProject, onTabChange }: HeaderProps)
   return (
     <header className="app-header">
       <div className="app-header__brand">
-        <h1>cbm-dashboard</h1>
+        <h1>Dashboard</h1>
         {selectedProject ? (
           <span className="app-header__project">Project: {selectedProject}</span>
         ) : (

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# cbm-dashboard dev launcher
+# Dashboard dev launcher
 #
 # Usage:
 #   ./dev.sh            — start API + UI together
@@ -57,7 +57,7 @@ ensure_deps() {
 
 usage() {
   echo -e "
-${BOLD}cbm-dashboard dev launcher${RESET}
+${BOLD}Dashboard dev launcher${RESET}
 
   ${BOLD}./dev.sh${RESET}              Start API + UI together
   ${BOLD}./dev.sh api${RESET}          Start API only   (default port 3000)

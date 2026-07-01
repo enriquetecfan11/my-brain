@@ -1,13 +1,15 @@
 #!/usr/bin/env bash
-# My Brain — launch the full local stack (cbm-dashboard API + UI).
+# My Brain — launch the full local stack (Dashboard API + UI).
 #
-# Usage:
+# Usage (Git Bash / WSL / macOS / Linux):
 #   ./dev.sh              Start API (:3000) + UI (:5173)
 #   ./dev.sh --open       Same, then open http://localhost:5173 in the browser
 #   ./dev.sh install      npm install in api/ and ui/
 #   ./dev.sh api          API only
 #   ./dev.sh ui           UI only
 #   ./dev.sh --help
+#
+# Windows PowerShell: use .\dev.ps1 (same options, -Open instead of --open)
 #
 # Environment:
 #   CBM_CACHE_DIR         SQLite cache (default: ~/.cache/codebase-memory-mcp)
@@ -20,7 +22,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-DASHBOARD_DEV="$ROOT/cbm-dashboard/dev.sh"
+DASHBOARD_DEV="$ROOT/Dashboard/dev.sh"
 
 BOLD="\033[1m"
 RESET="\033[0m"
@@ -93,7 +95,7 @@ cmd_start() {
   maybe_open_browser "$open_flag"
 
   echo ""
-  info "Starting cbm-dashboard (API + UI)…"
+  info "Starting Dashboard (API + UI)…"
   echo ""
   exec "$DASHBOARD_DEV" both
 }

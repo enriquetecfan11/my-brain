@@ -1,7 +1,7 @@
-# UI Migration Plan — cbm-dashboard
+# UI Migration Plan — Dashboard
 
-Plan to replace the embedded graph UI (`src/ui/`) with a standalone
-**cbm-dashboard** service: Node/TypeScript backend + React SPA.
+Plan to replace the embedded graph UI (`MCP/src/ui/`) with a standalone
+**Dashboard** service: Node/TypeScript backend + React SPA.
 
 ---
 
@@ -77,17 +77,17 @@ Query: `limit`, `offset`, `label`, `filePathPrefix`, `namePattern`, `edgeTypes`,
 }
 ```
 
-Full implementation notes: see git history / `cbm-dashboard/api/src/db.ts`.
+Full implementation notes: see git history / `Dashboard/api/src/db.ts`.
 
 ---
 
 ## Directory layout
 
 ```text
-cbm-dashboard/
+Dashboard/
   api/          # Fastify REST API (reads SQLite cache)
   ui/           # React 19 + Vite SPA (this iteration)
-docs/
+Dashboard/docs/
   ui-migration-plan.md
 ```
 
@@ -101,7 +101,7 @@ Fastify backend on port 3000.
 ### Terminal 1 — API
 
 ```bash
-cd cbm-dashboard/api
+cd Dashboard/api
 npm install
 npm run dev
 ```
@@ -111,7 +111,7 @@ Listens on `http://127.0.0.1:3000` by default (`CBM_API_PORT`, `CBM_API_HOST`).
 ### Terminal 2 — UI
 
 ```bash
-cd cbm-dashboard/ui
+cd Dashboard/ui
 npm install
 npm run dev
 ```
@@ -122,7 +122,7 @@ are proxied to `http://localhost:3000`.
 ### Production build (UI only)
 
 ```bash
-cd cbm-dashboard/ui
+cd Dashboard/ui
 npm run build
 npm run preview   # optional: serve dist/ locally
 ```
@@ -237,7 +237,7 @@ Local graph mode, zoom/pan, hover highlighting, and `GLOBAL_LIMIT` pagination ar
 ## What we do NOT use
 
 - `httpd.c`, `layout3d.c`, `GET /api/layout` from the C binary
-- Embedded `cbm-dashboard/ui` Vite build (replaces legacy `graph-ui/`)
+- Embedded `Dashboard/ui` Vite build (replaces legacy `graph-ui/`)
 - `POST /rpc` for graph data (MCP proxy optional later)
 
 The SPA talks **only** to `/api/*` on the Node backend.

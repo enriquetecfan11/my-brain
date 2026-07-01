@@ -48,8 +48,9 @@ private/
 # Build artifacts
 build/
 node_modules/
-cbm-dashboard/ui/dist/
-cbm-dashboard/api/dist/
+Dashboard/ui/dist/
+Dashboard/api/dist/
+MCP/build/
 
 # Generated reports
 BENCHMARK_REPORT.md
